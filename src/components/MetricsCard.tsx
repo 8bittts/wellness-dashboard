@@ -6,10 +6,10 @@ interface MetricsCardProps {
 
 export function MetricsCard({ title, value, subtitle }: MetricsCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-3xl font-bold text-slate-600 mb-2">{value}</p>
-      <p className="text-sm text-gray-500">{subtitle}</p>
+    <div className="bg-white rounded-md shadow-sm p-3 sm:p-4">
+      <h3 className="text-sm font-medium text-gray-900 mb-1">{title}</h3>
+      <p className="text-xl sm:text-2xl font-bold text-slate-600 mb-1">{value}</p>
+      <p className="text-xs sm:text-sm text-gray-500">{subtitle}</p>
     </div>
   );
 } 

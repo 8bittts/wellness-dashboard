@@ -177,7 +177,7 @@ export const defaultChartOptions = {
         padding: 20,
         font: {
           size: 12,
-          weight: '500',
+          weight: 500,
         },
         usePointStyle: true,
         boxWidth: 8,
@@ -196,7 +196,7 @@ export const defaultChartOptions = {
         size: 12,
       },
       callbacks: {
-        label: function(context: any) {
+        label: function(context: { dataset: { label?: string }; parsed: { y: number | null } }) {
           let label = context.dataset.label || '';
           if (label) {
             label += ': ';

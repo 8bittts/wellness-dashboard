@@ -38,78 +38,78 @@ export function DataEntryForm({ onSubmit, nextId }: DataEntryFormProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4">Add New Entry</h2>
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-semibold mb-4">Add New Entry</h2>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Age</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
           <input
             type="number"
             value={formData.age || ''}
             onChange={(e) => handleInputChange('age', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Sex</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Sex</label>
           <select
             value={formData.sex}
             onChange={(e) => handleInputChange('sex', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           >
             <option value="m">Male</option>
             <option value="f">Female</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Phone Time (min)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Phone Time (min)</label>
           <input
             type="number"
             value={formData.phoneTime || ''}
             onChange={(e) => handleInputChange('phoneTime', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Depression Score</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Depression Score</label>
           <input
             type="number"
             value={formData.depression || ''}
             onChange={(e) => handleInputChange('depression', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Anxiety Score</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Anxiety Score</label>
           <input
             type="number"
             value={formData.anxiety || ''}
             onChange={(e) => handleInputChange('anxiety', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Sleep Score</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Sleep Score</label>
           <input
             type="number"
             value={formData.sleep || ''}
             onChange={(e) => handleInputChange('sleep', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Recovery Score</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Recovery Score</label>
           <input
             type="number"
             value={formData.recovery || ''}
             onChange={(e) => handleInputChange('recovery', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500"
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm"
           />
         </div>
-        <div className="col-span-2 md:col-span-4">
+        <div className="col-span-1 sm:col-span-2 lg:col-span-4">
           <button
             type="submit"
-            className="w-full bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+            className="w-full bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 text-sm"
           >
             Add Entry
           </button>

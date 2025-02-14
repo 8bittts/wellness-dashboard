@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-type RouteParams = {
+interface RouteSegmentConfig {
   params: {
     id: string;
   };
-};
+  searchParams: { [key: string]: string | string[] | undefined };
+}
 
 export async function DELETE(
-  request: NextRequest,
-  context: RouteParams
+  _req: NextRequest,
+  { params }: RouteSegmentConfig
 ) {
   try {
-    const id = parseInt(context.params.id);
+    const id = parseInt(params.id);
     await prisma.participantData.delete({
       where: {
         id,

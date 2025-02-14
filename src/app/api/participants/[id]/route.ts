@@ -1,25 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-interface RouteSegmentConfig {
-  params: {
-    id: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
 export async function DELETE(
-  _req: NextRequest,
-  { params }: RouteSegmentConfig
+  request: Request,
+  { params }: { params: { id: string } }
 ) {
+  if (!params.id) {
+    return NextResponse.json(
+      { error: 'Missing participant ID' },
+      { status: 400 }
+    );
+  }
+
   try {
     const id = parseInt(params.id);
-    await prisma.participantData.delete({
+    const deletedParticipant = await prisma.participantData.delete({
       where: {
         id,
       },
     });
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, data: deletedParticipant });
   } catch (error) {
     console.error('Error deleting participant:', error);
     return NextResponse.json(

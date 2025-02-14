@@ -127,13 +127,15 @@ export default function Home() {
     try {
       const response = await fetch('/api/participants');
       if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
       const participantsData = await response.json();
       setData(participantsData);
       setError(null);
     } catch (err) {
-      setError('Error loading data');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch data';
+      setError(errorMessage);
       console.error('Error:', err);
     } finally {
       setLoading(false);
@@ -146,11 +148,14 @@ export default function Home() {
         method: 'DELETE',
       });
       if (!response.ok) {
-        throw new Error('Failed to delete participant');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to delete participant (${response.status})`);
       }
       await fetchData();
     } catch (err) {
-      console.error('Error deleting participant:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Error deleting participant';
+      console.error(errorMessage);
+      // Optionally show error to user via toast or alert
     }
   };
 
@@ -164,10 +169,13 @@ export default function Home() {
         body: JSON.stringify(newEntry),
       });
       if (!response.ok) {
-        throw new Error('Failed to add participant');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to add participant (${response.status})`);
       }
       await fetchData();
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error adding participant';
+      console.error(errorMessage);
       console.error('Error adding participant:', err);
     }
   };

@@ -4,12 +4,11 @@ import { Prisma, PrismaClient } from '@prisma/client';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  console.log('DELETE request received for ID:', params.id);
+  const { id } = context.params;
   
-  if (!params.id) {
-    console.log('No ID provided');
+  if (!id) {
     return NextResponse.json(
       { error: 'Missing participant ID' },
       { status: 400 }
@@ -17,16 +16,14 @@ export async function DELETE(
   }
 
   try {
-    console.log('Attempting to delete participant with ID:', params.id);
-    const id = parseInt(params.id);
+    const participantId = parseInt(id);
     
     // First check if the participant exists
     const participant = await prisma.participantData.findUnique({
-      where: { id }
+      where: { id: participantId }
     });
 
     if (!participant) {
-      console.log('Participant not found:', id);
       return NextResponse.json(
         { error: 'Participant not found' },
         { status: 404 }
@@ -34,17 +31,14 @@ export async function DELETE(
     }
 
     const deletedParticipant = await prisma.participantData.delete({
-      where: { id }
+      where: { id: participantId }
     });
     
-    console.log('Successfully deleted participant:', deletedParticipant);
     return NextResponse.json({ 
       success: true, 
       data: deletedParticipant 
     });
   } catch (error) {
-    console.error('Detailed error:', error);
-
     // Handle known Prisma errors
     if (
       error instanceof Error &&

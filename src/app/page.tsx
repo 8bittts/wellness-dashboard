@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ScatterController } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ScatterController, TooltipItem } from 'chart.js';
 import { Line, Bar, Scatter } from 'react-chartjs-2';
 import { ParticipantData } from '../types/research';
 import { MetricsCard } from '../components/MetricsCard';
@@ -59,7 +59,7 @@ const defaultChartOptions = {
       padding: 12,
       displayColors: true,
       callbacks: {
-        label: function(context: any) {
+        label: function(context: TooltipItem<'line' | 'bar' | 'scatter'>) {
           let label = context.dataset.label || '';
           if (label) {
             label += ': ';

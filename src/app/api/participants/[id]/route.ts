@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 export async function DELETE(
   request: Request,
@@ -43,8 +44,45 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Detailed error:', error);
+
+    // Handle known Prisma errors
+    if (
+      error instanceof Error &&
+      error.name === 'PrismaClientKnownRequestError' &&
+      'code' in error
+    ) {
+      const prismaError = error as { code: string };
+      if (prismaError.code === 'P2002') {
+        return NextResponse.json(
+          { error: 'Unique constraint violation' },
+          { status: 409 }
+        );
+      }
+      if (prismaError.code === 'P2025') {
+        return NextResponse.json(
+          { error: 'Record not found' },
+          { status: 404 }
+        );
+      }
+    }
+
+    // Handle initialization errors
+    if (
+      error instanceof Error &&
+      error.name === 'PrismaClientInitializationError'
+    ) {
+      return NextResponse.json(
+        { error: 'Database connection error', details: error.message },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Error deleting participant', details: error instanceof Error ? error.message : 'Unknown error' },
+      { 
+        error: 'Error deleting participant', 
+        details: error instanceof Error ? error.message : 'Unknown error',
+        type: error instanceof Error ? error.constructor.name : 'Unknown'
+      },
       { status: 500 }
     );
   }

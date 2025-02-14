@@ -6,12 +6,27 @@ const globalForPrisma = globalThis as unknown as {
 
 const prismaClientSingleton = () => {
   console.log('Initializing PrismaClient...');
-  return new PrismaClient({
-    log: ['query', 'error', 'warn'],
-  });
+  try {
+    return new PrismaClient({
+      log: ['query', 'error', 'warn'],
+      errorFormat: 'pretty',
+    });
+  } catch (error) {
+    console.error('Failed to initialize PrismaClient:', error);
+    throw error;
+  }
 };
 
-export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+if (!globalForPrisma.prisma) {
+  try {
+    globalForPrisma.prisma = prismaClientSingleton();
+  } catch (error) {
+    console.error('Failed to set global prisma instance:', error);
+    throw error;
+  }
+}
+
+export const prisma = globalForPrisma.prisma;
 
 if (process.env.NODE_ENV !== 'production') {
   console.log('Development environment detected, setting global prisma instance');

@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model ParticipantData {
+  id                                        Int      @id @default(autoincrement())
+  createdAt                                 DateTime @default(now())
+  updatedAt                                 DateTime @updatedAt
+  date                                      String
+  round_of_phone_calls                      Int
+  days_in_treatment                         Int
+  age                                       Int
+  sex                                       String
+  have_you_been_abstinent_the_past_28_days  String
+  if_yes_how_long_have_you_been_abstinent   String
+  phoneTime                                 Int
+  depression                                Int
+  anxiety                                   Int
+  sleep                                     Int
+  recovery                                  Int
+  Mobile_Phone_Problematic_Use_Score        Int
+  Advanced_Warning_of_Relapse_Score         Int
+}

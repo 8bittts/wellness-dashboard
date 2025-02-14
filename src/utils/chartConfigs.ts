@@ -171,10 +171,10 @@ export const defaultChartOptions = {
   },
   plugins: {
     legend: {
-      position: 'top' as const,
-      align: 'start' as const,
+      position: 'bottom' as const,
+      align: 'center' as const,
       labels: {
-        padding: 20,
+        padding: 25,
         font: {
           size: 12,
           weight: 500,
@@ -209,4 +209,12 @@ export const defaultChartOptions = {
       }
     },
   },
+  layout: {
+    padding: {
+      top: 20,
+      right: 20,
+      bottom: 80,
+      left: 20
+    }
+  }
 }; 

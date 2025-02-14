@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "prisma generate && next build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["sfo1"]
+  "regions": ["iad1"],
+  "env": {
+    "POSTGRES_URL": "postgres://default:5bf6b008a9ec05f6870c476d10b5321797aa0c0c@ep-shiny-dawn-a4qqvlm4-pooler.us-east-1.aws.neon.tech/verceldb?sslmode=require&pgbouncer=true",
+    "POSTGRES_URL_NON_POOLING": "postgres://default:5bf6b008a9ec05f6870c476d10b5321797aa0c0c@ep-shiny-dawn-a4qqvlm4.us-east-1.aws.neon.tech/verceldb?sslmode=require"
+  }
 } 

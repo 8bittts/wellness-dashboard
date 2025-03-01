@@ -172,7 +172,7 @@ export function DataEntryForm({ onSubmit, nextId }: DataEntryFormProps) {
         <div className="col-span-1 sm:col-span-2 lg:col-span-4">
           <button
             type="submit"
-            className="w-full bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 text-sm"
+            className="w-full bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm"
           >
             Add Entry
           </button>

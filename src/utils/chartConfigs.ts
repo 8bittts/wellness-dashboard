@@ -1,5 +1,8 @@
 import { ParticipantData } from '../types/research';
 
+/**
+ * Color constants for chart elements
+ */
 export const CHART_COLORS = {
   // Bright, distinct colors
   depression: 'rgb(255, 99, 132)',    // Bright pink/red
@@ -14,7 +17,22 @@ export const CHART_COLORS = {
   gridLines: 'rgb(243, 244, 246)',    // Very light gray
 } as const;
 
+/**
+ * Calculates the trend line for a set of data points
+ * @param data Array of {x, y} points to calculate trend line for
+ * @returns Trend line parameters including slope, intercept, and bounds
+ */
 export function calculateTrendLine(data: { x: number; y: number }[]) {
+  // Handle edge cases
+  if (!data || data.length < 2) {
+    return {
+      slope: 0,
+      intercept: 0,
+      minX: 0,
+      maxX: 0
+    };
+  }
+  
   const xValues = data.map(d => d.x);
   const yValues = data.map(d => d.y);
   
@@ -24,7 +42,18 @@ export function calculateTrendLine(data: { x: number; y: number }[]) {
   const sumXY = xValues.reduce((sum, x, i) => sum + x * yValues[i], 0);
   const sumXX = xValues.reduce((sum, x) => sum + x * x, 0);
   
-  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  // Check for division by zero
+  const denominator = (n * sumXX - sumX * sumX);
+  if (denominator === 0) {
+    return {
+      slope: 0,
+      intercept: yValues.reduce((a, b) => a + b, 0) / yValues.length,
+      minX: Math.min(...xValues),
+      maxX: Math.max(...xValues),
+    };
+  }
+  
+  const slope = (n * sumXY - sumX * sumY) / denominator;
   const intercept = (sumY - slope * sumX) / n;
   
   return {
@@ -35,102 +64,159 @@ export function calculateTrendLine(data: { x: number; y: number }[]) {
   };
 }
 
+/**
+ * Generates mental health chart data from participant data
+ * @param data Array of participant data
+ * @returns Formatted chart data with depression, anxiety and sleep metrics
+ */
 export function getMentalHealthChartData(data: ParticipantData[]) {
+  // Filter out invalid entries
+  const validData = data.filter(d => 
+    d.depression > 0 && d.anxiety > 0 && d.sleep > 0
+  );
+  
+  if (validData.length === 0) {
+    return {
+      labels: [],
+      datasets: []
+    };
+  }
+  
   return {
-    labels: data.map(d => d.id.toString()),
+    labels: validData.map(d => d.id.toString()),
     datasets: [
       {
         label: 'Depression',
-        data: data.map(d => d.depression),
+        data: validData.map(d => d.depression),
+        backgroundColor: CHART_COLORS.depression,
         borderColor: CHART_COLORS.depression,
-        backgroundColor: CHART_COLORS.depression + '20',
-        tension: 0.3,
-        borderWidth: 2,
-        fill: true,
+        borderWidth: 1,
       },
       {
         label: 'Anxiety',
-        data: data.map(d => d.anxiety),
+        data: validData.map(d => d.anxiety),
+        backgroundColor: CHART_COLORS.anxiety,
         borderColor: CHART_COLORS.anxiety,
-        backgroundColor: CHART_COLORS.anxiety + '20',
-        tension: 0.3,
-        borderWidth: 2,
-        fill: true,
+        borderWidth: 1,
       },
       {
-        label: 'Sleep',
-        data: data.map(d => d.sleep),
+        label: 'Sleep Quality',
+        data: validData.map(d => d.sleep),
+        backgroundColor: CHART_COLORS.sleep,
         borderColor: CHART_COLORS.sleep,
-        backgroundColor: CHART_COLORS.sleep + '20',
-        tension: 0.3,
-        borderWidth: 2,
-        fill: true,
+        borderWidth: 1,
       },
     ],
   };
 }
 
+/**
+ * Generates phone time vs recovery chart data
+ * @param data Array of participant data
+ * @returns Formatted chart data for scatter plot of phone time vs recovery
+ */
 export function getPhoneTimeVsRecoveryData(data: ParticipantData[]) {
-  const validData = data.filter(d => d.phoneTime > 0 && d.recovery > 0);
-  const points = validData.map(d => ({ x: d.phoneTime, y: d.recovery }));
+  // Filter out invalid entries
+  const validData = data.filter(d => 
+    d.phoneTime > 0 && d.recovery > 0
+  );
+  
+  if (validData.length === 0) {
+    return {
+      datasets: []
+    };
+  }
+  
+  const points = validData.map(d => ({
+    x: d.phoneTime,
+    y: d.recovery
+  }));
+  
   const trendLine = calculateTrendLine(points);
-
+  
   return {
     datasets: [
       {
-        type: 'scatter' as const,
-        label: 'Individual Data Points',
+        label: 'Phone Time vs Recovery',
         data: points,
         backgroundColor: CHART_COLORS.dataPoints,
-        pointRadius: 6,
-        pointStyle: 'circle',
-        pointHoverRadius: 8,
+        borderColor: 'white',
+        borderWidth: 1,
+        radius: 5,
       },
       {
-        type: 'scatter' as const,
         label: 'Trend Line',
         data: [
           { x: trendLine.minX, y: trendLine.slope * trendLine.minX + trendLine.intercept },
           { x: trendLine.maxX, y: trendLine.slope * trendLine.maxX + trendLine.intercept }
         ],
-        backgroundColor: 'transparent',
-        pointRadius: 0,
-        showLine: true,
         borderColor: CHART_COLORS.trendLine,
         borderWidth: 2,
         borderDash: [5, 5],
+        pointRadius: 0,
+        showLine: true,
       }
     ],
   };
 }
 
+/**
+ * Generates gender comparison chart data
+ * @param data Array of participant data
+ * @returns Formatted chart data comparing metrics between genders
+ */
 export function getGenderComparisonData(data: ParticipantData[]) {
   const calculateAverage = (data: ParticipantData[], field: keyof ParticipantData, sex: 'f' | 'm') => {
-    const filtered = data.filter(d => d.sex === sex);
-    return filtered.reduce((acc, curr) => acc + Number(curr[field]), 0) / filtered.length;
+    const filtered = data.filter(d => 
+      d.sex === sex && 
+      typeof d[field] === 'number' && 
+      (d[field] as number) > 0
+    );
+    
+    if (filtered.length === 0) return 0;
+    
+    const values = filtered.map(d => d[field] as number);
+    return values.reduce((sum, val) => sum + val, 0) / values.length;
   };
-
+  
+  const fields = [
+    "Mobile_Phone_Problematic_Use_Score", 
+    "Advanced_Warning_of_Relapse_Score", 
+    "phoneTime", 
+    "depression", 
+    "anxiety", 
+    "sleep"
+  ] as const;
+  
+  const labels = [
+    "Mobile Phone Use", 
+    "Relapse Warning", 
+    "Screen Time", 
+    "Depression", 
+    "Anxiety", 
+    "Sleep Quality"
+  ];
+  
+  const femaleData = fields.map(field => calculateAverage(data, field, 'f'));
+  const maleData = fields.map(field => calculateAverage(data, field, 'm'));
+  
   return {
-    labels: ['Female', 'Male'],
+    labels,
     datasets: [
       {
-        label: 'Phone Time',
-        data: ['f', 'm'].map(sex => calculateAverage(data, 'phoneTime', sex as 'f' | 'm')),
-        backgroundColor: CHART_COLORS.phoneTime,
-        borderRadius: 4,
+        label: 'Female',
+        data: femaleData,
+        backgroundColor: 'rgba(236, 72, 153, 0.6)',
+        borderColor: 'rgba(236, 72, 153, 1)',
+        borderWidth: 1,
       },
       {
-        label: 'Depression',
-        data: ['f', 'm'].map(sex => calculateAverage(data, 'depression', sex as 'f' | 'm')),
-        backgroundColor: CHART_COLORS.depression,
-        borderRadius: 4,
-      },
-      {
-        label: 'Recovery',
-        data: ['f', 'm'].map(sex => calculateAverage(data, 'recovery', sex as 'f' | 'm')),
-        backgroundColor: CHART_COLORS.recovery,
-        borderRadius: 4,
-      },
+        label: 'Male',
+        data: maleData,
+        backgroundColor: 'rgba(37, 99, 235, 0.6)',
+        borderColor: 'rgba(37, 99, 235, 1)',
+        borderWidth: 1,
+      }
     ],
   };
 }

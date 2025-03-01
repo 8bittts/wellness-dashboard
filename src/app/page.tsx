@@ -115,7 +115,7 @@ export default function Home() {
   const [data, setData] = useState<ParticipantData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [ageCorrelationsView, setAgeCorrelationsView] = useState<ChartViewMode>('scatter');
+  const [ageCorrelationsView, setAgeCorrelationsView] = useState<ChartViewMode>('line');
   const [phoneTimeView, setPhoneTimeView] = useState<ChartViewMode>('scatter');
   const [mentalHealthView, setMentalHealthView] = useState<ChartViewMode>('bar');
 
@@ -198,7 +198,7 @@ export default function Home() {
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={fetchData}
-            className="bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-700"
+            className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600"
           >
             Retry
           </button>

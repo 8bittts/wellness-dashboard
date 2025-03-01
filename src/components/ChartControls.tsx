@@ -20,13 +20,13 @@ export function ChartControls({ activeView, onViewChange, views }: ChartControls
             px-4 py-2 text-sm font-medium
             ${
               activeView === view.id
-                ? 'bg-slate-600 text-white hover:bg-slate-700'
+                ? 'bg-indigo-500 text-white hover:bg-indigo-600'
                 : 'bg-white text-gray-700 hover:bg-gray-50'
             }
             ${view.id === views[0].id ? 'rounded-l-lg' : ''}
             ${view.id === views[views.length - 1].id ? 'rounded-r-lg' : ''}
             border border-gray-200
-            focus:z-10 focus:ring-2 focus:ring-slate-500 focus:text-slate-700
+            focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700
             transition-colors duration-200
           `}
         >

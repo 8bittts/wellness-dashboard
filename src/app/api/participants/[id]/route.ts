@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export async function DELETE(
   request: Request,
@@ -39,44 +39,30 @@ export async function DELETE(
       data: deletedParticipant 
     });
   } catch (error) {
-    // Handle known Prisma errors
-    if (
-      error instanceof Error &&
-      error.name === 'PrismaClientKnownRequestError' &&
-      'code' in error
-    ) {
-      const prismaError = error as { code: string };
-      if (prismaError.code === 'P2002') {
-        return NextResponse.json(
-          { error: 'Unique constraint violation' },
-          { status: 409 }
-        );
-      }
-      if (prismaError.code === 'P2025') {
-        return NextResponse.json(
-          { error: 'Record not found' },
-          { status: 404 }
-        );
-      }
-    }
+    console.error('Error deleting participant:', error);
 
-    // Handle initialization errors
-    if (
-      error instanceof Error &&
-      error.name === 'PrismaClientInitializationError'
-    ) {
+    if (error instanceof Prisma.PrismaClientInitializationError) {
       return NextResponse.json(
-        { error: 'Database connection error', details: error.message },
+        { error: 'Database connection error. Please try again later.' },
         { status: 503 }
       );
     }
 
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return NextResponse.json(
+          { error: 'Participant not found' },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json(
+        { error: 'Database query error. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { 
-        error: 'Error deleting participant', 
-        details: error instanceof Error ? error.message : 'Unknown error',
-        type: error instanceof Error ? error.constructor.name : 'Unknown'
-      },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }

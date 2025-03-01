@@ -1,5 +1,11 @@
 import { ParticipantData, StatsSummary, CorrelationResult } from '../types/research';
 
+/**
+ * Calculates the Pearson correlation coefficient between two arrays of numbers.
+ * @param x First array of values
+ * @param y Second array of values
+ * @returns Correlation coefficient between -1 and 1
+ */
 export const calculateCorrelation = (x: number[], y: number[]): number => {
   // Ensure arrays are of equal length and not empty
   if (x.length !== y.length || x.length === 0) {
@@ -48,11 +54,32 @@ export const calculateCorrelation = (x: number[], y: number[]): number => {
   return Math.max(-1, Math.min(1, correlation));
 };
 
+/**
+ * Calculates descriptive statistics for an array of numbers.
+ * @param data Array of values
+ * @returns Object containing mean, median, standard deviation, min, and max
+ */
 export const calculateStats = (data: number[]): StatsSummary => {
-  const filteredData = data.filter(n => n !== 0);
-  const mean = filteredData.reduce((a, b) => a + b) / filteredData.length;
+  // Filter out zeros and invalid values
+  const filteredData = data.filter(n => n !== 0 && !isNaN(n) && n !== null);
+  
+  if (filteredData.length === 0) {
+    return {
+      mean: 0,
+      median: 0,
+      stdDev: 0,
+      min: 0,
+      max: 0
+    };
+  }
+  
+  const mean = filteredData.reduce((a, b) => a + b, 0) / filteredData.length;
   const sortedData = [...filteredData].sort((a, b) => a - b);
-  const median = sortedData[Math.floor(sortedData.length / 2)];
+  const midpoint = Math.floor(sortedData.length / 2);
+  const median = sortedData.length % 2 === 0 
+    ? (sortedData[midpoint - 1] + sortedData[midpoint]) / 2 
+    : sortedData[midpoint];
+    
   const variance = filteredData.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / filteredData.length;
   const stdDev = Math.sqrt(variance);
 
@@ -65,8 +92,20 @@ export const calculateStats = (data: number[]): StatsSummary => {
   };
 };
 
+/**
+ * Analyzes correlations between phone time and various measures.
+ * @param data Array of participant data
+ * @returns Array of correlation results
+ */
 export const analyzePhoneTimeCorrelations = (data: ParticipantData[]): CorrelationResult[] => {
-  const validData = data.filter(d => d.phoneTime > 0 && d.recovery > 0);
+  const validData = data.filter(d => 
+    d.phoneTime > 0 && 
+    d.recovery > 0 &&
+    d.depression > 0 &&
+    d.anxiety > 0 &&
+    d.sleep > 0
+  );
+  
   const phoneTime = validData.map(d => d.phoneTime);
 
   return [

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function GET() {
   try {
@@ -10,22 +11,25 @@ export async function GET() {
     });
     return NextResponse.json(participants);
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.includes("Can't reach database server")
-    ) {
+    console.error('Error fetching participants:', error);
+
+    // Handle specific Prisma errors
+    if (error instanceof Prisma.PrismaClientInitializationError) {
       return NextResponse.json(
         { error: 'Database connection error. Please try again later.' },
         { status: 503 }
       );
     }
 
-    console.error('Error fetching participants:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      return NextResponse.json(
+        { error: 'Database query error. Please try again later.' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { 
-        error: 'Error fetching participants',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }
@@ -42,22 +46,26 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(participant);
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.includes("Can't reach database server")
-    ) {
+    console.error('Error creating participant:', error);
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
       return NextResponse.json(
         { error: 'Database connection error. Please try again later.' },
         { status: 503 }
       );
     }
 
-    console.error('Error creating participant:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return NextResponse.json(
+          { error: 'A participant with this ID already exists.' },
+          { status: 409 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { 
-        error: 'Error creating participant',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Error creating participant' },
       { status: 500 }
     );
   }

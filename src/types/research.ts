@@ -1,5 +1,7 @@
 export interface ParticipantData {
   id: number;
+  createdAt?: Date;
+  updatedAt?: Date;
   date: string;
   round_of_phone_calls: number;
   days_in_treatment: number;

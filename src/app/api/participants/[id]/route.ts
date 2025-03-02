@@ -2,21 +2,17 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 
-// @ts-ignore - The Next.js App Router types for API routes
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  
-  if (!id) {
-    return NextResponse.json(
-      { error: 'Missing participant ID' },
-      { status: 400 }
-    );
-  }
-
+export async function DELETE(_request: Request, context: { params: { id: string } }) {
   try {
+    const id = context.params.id;
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Missing participant ID' },
+        { status: 400 }
+      );
+    }
+
     const participantId = parseInt(id);
     
     // First check if the participant exists

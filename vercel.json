@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "prisma generate && next build --no-lint",
+  "buildCommand": "cp tsconfig.build.json tsconfig.json && prisma generate && next build --no-lint",
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",

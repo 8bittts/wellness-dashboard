@@ -146,7 +146,7 @@ export function DataTable({ data, onDelete }: DataTableProps) {
 /**
  * Helper function to format cell values for display
  */
-function formatCellValue(value: any): string {
+function formatCellValue(value: unknown): string {
   if (value === null || value === undefined) {
     return '-';
   }

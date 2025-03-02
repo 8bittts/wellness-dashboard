@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { Pool } from '@neondatabase/serverless';
 
 // For logging database connection details
 const logConnectionInfo = () => {
